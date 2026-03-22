@@ -8,7 +8,7 @@ import {
   ChevronRight, Award
 } from 'lucide-react';
 
-const API_URL = "https://betting-app-backend-ymji.onrender.com";
+const API_URL = "https://betting-app-backend-ymji.onrender.com/api/users";
 
 // running
 
