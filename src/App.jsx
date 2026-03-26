@@ -133,14 +133,8 @@ export default function App() {
     );
   }
 
-    const totalLockedEarnings = user.investments?.reduce((acc, plan) => {
-    const startDate = plan.createdAt ? new Date(plan.createdAt) : new Date();
-    const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24))+1;
-    const earnedDays = Math.min(daysPassed, plan.durationDays); 
-    return acc + (plan.dailyIncome * earnedDays);
-  }, 0) || 0;
+    const totalLockedEarnings = user?.investments?.reduce((acc, plan) => 
+  acc + plan.dailyIncome, 0) || 0;
 
   return (
     <div className="min-h-screen bg-slate-950 pb-32 text-white font-sans selection:bg-amber-400 selection:text-black overflow-hidden relative app-background">
