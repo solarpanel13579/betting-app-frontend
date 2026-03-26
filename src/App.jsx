@@ -54,6 +54,9 @@ export default function App() {
     }
   };
 
+  const totalLockedEarnings = user.investments?.reduce((acc, plan) => 
+  acc + (plan.dailyIncome * plan.durationDays), 0) || 0;
+
   const handleRecharge = () => {
     setModal({
       show: true,
@@ -174,25 +177,51 @@ export default function App() {
         </div>
         
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-6 rounded-[35px] flex justify-between items-center border border-white/10 shadow-2xl relative overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 blur-[50px] rounded-full"></div>
-          <div className="relative z-10">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Live Balance</p>
-            <p className="text-4xl font-black mt-1 tracking-tighter bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">₹{user.walletBalance.toLocaleString()}</p>
-          </div>
-          <motion.button 
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleRecharge} 
-            className="relative z-10 bg-amber-400 text-slate-950 px-6 py-4 rounded-2xl font-black flex items-center space-x-2 shadow-xl shadow-amber-400/20"
-          >
-            <Wallet size={18} />
-            <span className="text-xs uppercase tracking-tighter">Deposit</span>
-          </motion.button>
-        </motion.div>
+  initial={{ scale: 0.9, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden"
+>
+  <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 blur-[50px] rounded-full"></div>
+  
+  <div className="grid grid-cols-2 gap-4 relative z-10">
+    {/* Left Side: Wallet Balance */}
+    <div className="border-r border-white/5 pr-2">
+      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Available</p>
+      <p className="text-2xl font-black mt-1 tracking-tighter text-white">
+        ₹{user.walletBalance.toLocaleString()}
+      </p>
+      <motion.button 
+        whileTap={{ scale: 0.95 }}
+        onClick={handleRecharge} 
+        className="mt-3 w-full bg-amber-400 text-slate-950 py-2.5 rounded-xl font-black flex items-center justify-center space-x-1 shadow-lg shadow-amber-400/10"
+      >
+        <Wallet size={14} />
+        <span className="text-[10px] uppercase tracking-tighter">Deposit</span>
+      </motion.button>
+    </div>
+
+    {/* Right Side: Locked Earnings */}
+    <div className="pl-2">
+      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">In Maturity</p>
+      <p className="text-2xl font-black mt-1 tracking-tighter text-emerald-400/80">
+        ₹{totalLockedEarnings.toLocaleString()}
+      </p>
+      <motion.button 
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setModal({ 
+          show: true, 
+          type: 'error', 
+          title: 'Withdrawal Locked', 
+          message: 'Your returns are currently in the maturity cycle. Funds will be released to your available balance once the plan duration completes.' 
+        })}
+        className="mt-3 w-full bg-slate-800/80 text-slate-400 py-2.5 rounded-xl font-black flex items-center justify-center space-x-1 border border-white/5"
+      >
+        <Lock size={14} className="opacity-50" />
+        <span className="text-[10px] uppercase tracking-tighter">Withdraw</span>
+      </motion.button>
+    </div>
+  </div>
+</motion.div>
       </div>
 
       <div className="p-5 max-w-2xl mx-auto relative z-10">
