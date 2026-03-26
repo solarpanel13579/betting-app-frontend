@@ -530,6 +530,16 @@ function InvestmentTab({ user, setModal }) {
 
     
 function AccountTab({ user }) {
+const shareReferral = () => {
+    const text = `Join Sapphire and get ₹300 instantly! Use my code: ${user.myReferralCode}`;
+    if (navigator.share) {
+      navigator.share({ title: 'Sapphire App', text: text, url: window.location.origin });
+    } else {
+      navigator.clipboard.writeText(user.myReferralCode);
+      alert("Referral code copied!");
+    }
+  }
+  
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.95 }}
