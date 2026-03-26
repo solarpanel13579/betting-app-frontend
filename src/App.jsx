@@ -36,6 +36,10 @@ export default function App() {
   const handleAuth = async (e) => {
     e.preventDefault();
     const endpoint = isLogin ? 'login' : 'register';
+    const payload = isLogin 
+        ? { email: formData.email, password: formData.password }
+        : { ...formData };
+    
     try {
       const res = await axios.post(`${API_URL}/${endpoint}`, formData);
       if (isLogin) {
@@ -99,6 +103,12 @@ export default function App() {
               <>
                 <input type="text" placeholder="Full Name" className="w-full p-4 bg-slate-800/50 text-white rounded-2xl border border-white/5 outline-none focus:border-amber-400/50 transition-all" onChange={e => setFormData({...formData, name: e.target.value})} />
                 <input type="text" placeholder="Phone" className="w-full p-4 bg-slate-800/50 text-white rounded-2xl border border-white/5 outline-none focus:border-amber-400/50 transition-all" onChange={e => setFormData({...formData, phone: e.target.value})} />
+                <input 
+                    type="text" 
+                    placeholder="Referral Code (Optional)" 
+                    className="w-full p-4 bg-slate-800/50 text-white rounded-2xl border border-white/5 outline-none focus:border-amber-400/50 transition-all" 
+                    onChange={e => setFormData({...formData, referralCode: e.target.value})} 
+                />
               </>
             )}
             <input type="email" placeholder="Email" className="w-full p-4 bg-slate-800/50 text-white rounded-2xl border border-white/5 outline-none focus:border-amber-400/50 transition-all" onChange={e => setFormData({...formData, email: e.target.value})} />
