@@ -31,8 +31,7 @@ export default function App() {
     }
   }, []);
 
-  const totalLockedEarnings = user.investments?.reduce((acc, plan) => 
-    acc + (plan.dailyIncome * plan.durationDays), 0) || 0;
+  
 
   const isAdmin = user?.email === "solarpanel13579@gmail.com";
 
@@ -133,6 +132,9 @@ export default function App() {
       </div>
     );
   }
+
+  const totalLockedEarnings = user.investments?.reduce((acc, plan) => 
+    acc + (plan.dailyIncome * plan.durationDays), 0) || 0;
 
   return (
     <div className="min-h-screen bg-slate-950 pb-32 text-white font-sans selection:bg-amber-400 selection:text-black overflow-hidden relative app-background">
