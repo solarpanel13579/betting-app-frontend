@@ -563,6 +563,21 @@ function AccountTab({ user }) {
         </div>
       </div>
 
+      <div className="mt-6 bg-amber-400/10 p-5 rounded-3xl border border-amber-400/20 flex items-center justify-between">
+        <div className="text-left">
+          <p className="text-[9px] text-amber-400 uppercase font-black tracking-widest">Your Referral Code</p>
+          <p className="font-bold text-white text-lg tracking-widest uppercase">{user.myReferralCode || 'REFF001'}</p>
+        </div>
+        <motion.button 
+          whileTap={{ scale: 0.9 }}
+          onClick={shareReferral}
+          className="p-3 bg-amber-400 rounded-2xl text-slate-950 shadow-lg shadow-amber-400/20"
+        >
+          <Gift size={20} />
+        </motion.button>
+      </div>
+      
+
       <motion.button 
         whileTap={{ scale: 0.95 }}
         className="w-full mt-8 py-4 bg-slate-800/50 hover:bg-red-500/10 text-slate-400 hover:text-red-400 border border-white/5 rounded-2xl font-black text-xs uppercase tracking-widest transition-all relative z-10"
