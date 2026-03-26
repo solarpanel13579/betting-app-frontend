@@ -31,6 +31,9 @@ export default function App() {
     }
   }, []);
 
+  const totalLockedEarnings = user.investments?.reduce((acc, plan) => 
+    acc + (plan.dailyIncome * plan.durationDays), 0) || 0;
+
   const isAdmin = user?.email === "solarpanel13579@gmail.com";
 
   const handleAuth = async (e) => {
@@ -54,8 +57,7 @@ export default function App() {
     }
   };
 
-  const totalLockedEarnings = user.investments?.reduce((acc, plan) => 
-  acc + (plan.dailyIncome * plan.durationDays), 0) || 0;
+  
 
   const handleRecharge = () => {
     setModal({
@@ -177,10 +179,10 @@ export default function App() {
         </div>
         
         <motion.div 
-  initial={{ scale: 0.9, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden"
->
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden"
+        >
   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 blur-[50px] rounded-full"></div>
   
   <div className="grid grid-cols-2 gap-4 relative z-10">
@@ -678,7 +680,7 @@ function CustomModal({ modal, setModal }) {
                 <p className="text-amber-400 font-black text-[11px] uppercase tracking-widest UPI">nazimkhan1212@ptaxis</p>
 
                   <button 
-                  onClick={() => navigator.clipboard.writeText('shyamalkumar414@okicici')}
+                  onClick={() => navigator.clipboard.writeText('nazimkhan1212@ptaxis')}
                   className="text-slate-400 hover:text-amber-400 transition-colors"
                   title="Copy UPI ID"
                   >
