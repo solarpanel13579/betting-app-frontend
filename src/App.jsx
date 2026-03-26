@@ -477,7 +477,7 @@ function InvestmentTab({ user, setModal }) {
             
             // Calculate total days passed (using Math.floor to get whole numbers)
             const diffTime = Math.abs(today - startDate);
-            const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24))+1;
             
             // FIX: Calculate days remaining correctly
             const totalDuration = plan.durationDays || 20; // fallback to 20 if undefined
