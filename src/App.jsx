@@ -181,22 +181,22 @@ export default function App() {
         </div>
         
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden"
-        >
+  initial={{ scale: 0.9, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 p-5 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden"
+>
   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/5 blur-[50px] rounded-full"></div>
-  
+
   <div className="grid grid-cols-2 gap-4 relative z-10">
-    {/* Left Side: Wallet Balance */}
+    {/* Left: Wallet Balance */}
     <div className="border-r border-white/5 pr-2">
       <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Available</p>
       <p className="text-2xl font-black mt-1 tracking-tighter text-white">
         ₹{user.walletBalance.toLocaleString()}
       </p>
-      <motion.button 
+      <motion.button
         whileTap={{ scale: 0.95 }}
-        onClick={handleRecharge} 
+        onClick={handleRecharge}
         className="mt-3 w-full bg-amber-400 text-slate-950 py-2.5 rounded-xl font-black flex items-center justify-center space-x-1 shadow-lg shadow-amber-400/10"
       >
         <Wallet size={14} />
@@ -204,23 +204,50 @@ export default function App() {
       </motion.button>
     </div>
 
-    {/* Right Side: Locked Earnings */}
+    {/* Right: Today's Total Profit */}
     <div className="pl-2">
-      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">In Maturity</p>
-      <p className="text-2xl font-black mt-1 tracking-tighter text-emerald-400/80">
-        ₹{totalLockedEarnings.toLocaleString()}
+      <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Today's Profit</p>
+      <p className="text-2xl font-black mt-1 tracking-tighter text-emerald-400">
+        ₹{(user.investments?.reduce((acc, plan) => {
+          const start = new Date(plan.createdAt);
+          const now = new Date();
+          const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24))+1;
+          const totalDuration = plan.durationDays || 20;
+          // Only count if plan is still active
+          if (daysPassed < totalDuration) {
+            return acc + plan.dailyIncome;
+          }
+          return acc;
+        }, 0) || 0).toLocaleString()}
       </p>
-      <motion.button 
+      <motion.button
         whileTap={{ scale: 0.95 }}
-        onClick={() => setModal({ 
-          show: true, 
-          type: 'error', 
-          title: 'Withdrawal Locked', 
-          message: 'Your returns are currently in the maturity cycle. Funds will be released to your available balance once the plan duration completes.' 
-        })}
-        className="mt-3 w-full bg-slate-800/80 text-slate-400 py-2.5 rounded-xl font-black flex items-center justify-center space-x-1 border border-white/5"
+        onClick={() => {
+          const todayProfit = user.investments?.reduce((acc, plan) => {
+            const start = new Date(plan.createdAt);
+            const now = new Date();
+            const daysPassed = Math.floor((now - start) / (1000 * 60 * 60 * 24))+1;
+            if (daysPassed < (plan.durationDays || 20)) return acc + plan.dailyIncome;
+            return acc;
+          }, 0) || 0;
+
+          if (todayProfit <= 0) {
+            setModal({
+              show: true, type: 'error',
+              title: 'No Active Plans',
+              message: 'Purchase a plan to start earning daily profit.'
+            });
+            return;
+          }
+          setModal({
+            show: true, type: 'success',
+            title: `₹${todayProfit.toLocaleString()} Earned Today`,
+            message: 'Your daily profit across all active plans. Funds will be credited to your wallet at the end of each cycle.'
+          });
+        }}
+        className="mt-3 w-full bg-emerald-500/10 text-emerald-400 py-2.5 rounded-xl font-black flex items-center justify-center space-x-1 border border-emerald-500/20"
       >
-        <Lock size={14} className="opacity-50" />
+        <ArrowUpRight size={14} />
         <span className="text-[10px] uppercase tracking-tighter">Withdraw</span>
       </motion.button>
     </div>
@@ -351,13 +378,29 @@ function Dashboard({ user, setUser, setActiveTab, setModal }) {
       const res = await axios.post(`${API_URL}/invest`, {
         userId: user._id || user.id, planName: p.name, amount: p.price, dailyIncome: p.daily, durationDays: p.duration
       });
-      setUser(prev => ({ ...prev, walletBalance: res.data.remainingBalance }));
+
+      // Add new plan to user.investments in state immediately
+      const newPlan = {
+        _id: Date.now().toString(), // temp id
+        planName: p.name,
+        dailyIncome: p.daily,
+        durationDays: p.duration,
+        createdAt: new Date().toISOString(),
+        totalReturn: p.daily * p.duration,
+      };
+
+      setUser(prev => ({ 
+        ...prev, 
+        walletBalance: res.data.remainingBalance,
+        investments: [...(prev.investments || []), newPlan] 
+      }));
+
       setModal({ show: true, type: 'success', title: 'Plan Active', message: `Successfully deployed ${p.name}` });
       setActiveTab('investment'); 
     } catch (err) {
       setModal({ show: true, type: 'error', title: 'Alert', message: "Insufficient wallet balance." });
     }
-  };
+};
 
   return (
     <div className="space-y-6">
